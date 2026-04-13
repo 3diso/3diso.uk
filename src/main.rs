@@ -16,7 +16,10 @@ fn main() {
         let stream = stream.unwrap();
         let pages_ref = Arc::clone(&valid_pages);
         thread::spawn(move || {
-            handle_connection(stream, pages_ref);
+            match handle_connection(stream, pages_ref){
+                Ok(message) => println!("{message}"),
+                Err(error) => println!("{error}"),
+            };
         });
     }
 }

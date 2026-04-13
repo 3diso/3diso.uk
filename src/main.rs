@@ -1,16 +1,16 @@
 use std::{
     fs,
+    fs::{DirEntry},
     io::{BufReader, prelude::*},
     net::{TcpListener, TcpStream},
     str::FromStr,
     thread,
-    time::Duration,
 };
 
 fn main() {
     let listener = TcpListener::bind("[::]:31233").unwrap();
 
-    //let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let valid_pages = get_pages();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
@@ -40,10 +40,7 @@ fn handle_connection(mut stream: TcpStream) -> String {
 
     let (status_line, filename) = match &result[..] {
         "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "hello.html"),
-        "GET /sleep HTTP/1.1" => {
-            thread::sleep(Duration::from_secs(5));
-            ("HTTP/1.1 200 OK", "hello.html")
-        }
+        "GET /robots.txt HTTP/1.1" => ("HTTP/1.1 200 OK", "robots.txt"),
         _ => ("HTTP/1.1 404 NOT FOUND", "404.html"),
     };
 
@@ -54,4 +51,11 @@ fn handle_connection(mut stream: TcpStream) -> String {
 
     stream.write_all(response.as_bytes()).unwrap();
     String::from_str("Success").unwrap()
+}
+
+fn get_pages() -> Vec<String>{
+    match fs::read_dir("pages") {
+        Ok(content) => content.map(|file| file.unwrap().file_name().into_string().unwrap()).collect(),
+        Err(_) => panic!("Pages not found, server unviable"),
+    }
 }

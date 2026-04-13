@@ -19,7 +19,7 @@ fn main() {
             match handle_connection(stream, pages_ref){
                 Ok(message) => println!("{message}"),
                 Err(error) => println!("{error}"),
-            };
+            }
         });
     }
 }
@@ -29,7 +29,7 @@ fn handle_connection(mut stream: TcpStream, pages: Arc<Vec<String>>) -> Result<S
     let request_line = buf_reader
         .lines()
         .next()
-        .ok_or(Error::new(ErrorKind::Other, "no lines"))??;
+        .ok_or(Error::other("no lines"))??;
 
     let req = parse_http(&request_line[..]);
 
@@ -42,7 +42,7 @@ fn handle_connection(mut stream: TcpStream, pages: Arc<Vec<String>>) -> Result<S
         let mut pages_path = String::from_str("pages/").unwrap();
         pages_path.push_str(&req.path[..]);
         contents = fs::read_to_string(&pages_path).unwrap();
-    } else if &req.path == "" {
+    } else if req.path.is_empty() {
         contents = fs::read_to_string("pages/home").unwrap();
     } else {
         status_line = "HTTP/1.1 404 NOT FOUND";
@@ -73,7 +73,7 @@ fn get_pages() -> Vec<String> {
 }
 
 fn parse_http(request: &str) -> HttpRequest {
-    let mut parts = request.split(" ");
+    let mut parts = request.split(' ');
     HttpRequest::new(
         String::from_str(parts.next().unwrap()).unwrap(),
         String::from_str(&parts.next().unwrap()[1..]).unwrap(),
@@ -90,9 +90,9 @@ struct HttpRequest {
 impl HttpRequest {
     fn new(method: String, path: String, version: String) -> HttpRequest {
         HttpRequest {
-            method: method,
-            path: path,
-            version: version,
+            method,
+            path,
+            version,
         }
     }
 }

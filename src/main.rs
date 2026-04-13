@@ -1,23 +1,37 @@
 use std::{
     fs,
     io::{BufReader, prelude::*},
-    net::{TcpListener, TcpStream},
+    net::{TcpListener, TcpStream}, str::FromStr,
 };
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let listener = TcpListener::bind("2a0c:b381:803:4500:e7a0:1ed4:9462:7d54:443").unwrap();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
-        handle_connection(stream);
+        let res = handle_connection(stream);
+        println!("{res}");
     }
 }
-fn handle_connection(mut stream: TcpStream) {
+fn handle_connection(mut stream: TcpStream) -> String{
+    println!("Appeared");
     let buf_reader = BufReader::new(&stream);
-    let request_line = buf_reader.lines().next().unwrap().unwrap();
+    let request_line = buf_reader.lines().next();
 
-    let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+    let content; 
+    match request_line {
+        Some(contents) => content = contents,
+        None => return String::from_str("Fail").unwrap(),
+    };
+
+    let result;
+    match content {
+        Ok(contents) => result = contents,
+        Err(err) => return String::from_str("Fail").unwrap(),
+    };
+
+    let (status_line, filename) = if result == "GET / HTTP/1.1" {
         ("HTTP/1.1 200 OK", "hello.html")
     } else {
         ("HTTP/1.1 404 NOT FOUND", "404.html")
@@ -30,4 +44,5 @@ fn handle_connection(mut stream: TcpStream) {
         format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
 
     stream.write_all(response.as_bytes()).unwrap();
+    String::from_str("Success").unwrap()
 }

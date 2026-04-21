@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="resources/styles.css">
     <meta charset="utf-8">
-    <title>Hello!</title>
+    <title>Helloo!</title>
   </head>
   <body>
-    <h1>Hello!</h1>
-    <p>Hi from Rust</p>
+    <div id="container">
+        <nav>
+          <ul>
+            <li class> 
+              <a href="/">~/</a>
+            </li>
+            <li class> 
+              <a href="/egg">~/Easter Egg</a>
+            </li>
+            <li class> 
+              <a href="/robots.txt">~/robots</a>
+            </li>
+          </ul>
+        </nav>
+        <main id="post">
+          <p> Text here </p>
+        </main>
+    </div>
   </body>
 </html>
 

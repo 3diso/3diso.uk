@@ -1,14 +1,14 @@
 use std::{
     fs,
-    io::{BufReader, Error, ErrorKind, prelude::*},
+    io::{BufReader, Error, prelude::*},
     net::{TcpListener, TcpStream},
-    str::FromStr,
     sync::Arc,
     thread,
 };
 
 fn main() {
-    let listener = TcpListener::bind("[::]:31233").unwrap();
+    let listener = TcpListener::bind("[::]:443").unwrap();
+    //let listener = TcpListener::bind("127.0.0.1:7878").unwrap(); // for testing purposes
 
     let valid_pages = Arc::new(get_pages());
 
@@ -39,20 +39,14 @@ fn handle_connection(mut stream: TcpStream, pages: Arc<Vec<String>>) -> Result<S
     let contents;
 
     if pages.contains(&req.path) {
-        let mut pages_path = String::from_str("pages/").unwrap();
-        pages_path.push_str(&req.path[..]);
-        contents = fs::read_to_string(&pages_path).unwrap();
+        contents = fs::read_to_string(format!("pages/{}", req.path)).unwrap();
     } else if req.path.is_empty() {
         contents = fs::read_to_string("pages/home").unwrap();
+    } else if req.path == "resources/styles.css"{
+        contents = fs::read_to_string("resources/styles.css").unwrap();
     } else {
         status_line = "HTTP/1.1 404 NOT FOUND";
         contents = fs::read_to_string("pages/404").unwrap();
-        let response = format!(
-            "{status_line}\r\nContent-Length: {}\r\n\r\n{contents}",
-            contents.len()
-        );
-        stream.write_all(response.as_bytes()).unwrap();
-        return Ok(String::from_str("Successfully delivered content").unwrap());
     }
 
     let length = contents.len();
@@ -60,7 +54,7 @@ fn handle_connection(mut stream: TcpStream, pages: Arc<Vec<String>>) -> Result<S
     let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
 
     stream.write_all(response.as_bytes()).unwrap();
-    Ok(String::from_str("Successfully delivered content").unwrap())
+    Ok(String::from("Successfully delivered content"))
 }
 
 fn get_pages() -> Vec<String> {
@@ -75,9 +69,9 @@ fn get_pages() -> Vec<String> {
 fn parse_http(request: &str) -> HttpRequest {
     let mut parts = request.split(' ');
     HttpRequest::new(
-        String::from_str(parts.next().unwrap()).unwrap(),
-        String::from_str(&parts.next().unwrap()[1..]).unwrap(),
-        String::from_str(parts.next().unwrap()).unwrap(),
+        String::from(parts.next().unwrap()),
+        String::from(&parts.next().unwrap()[1..]),
+        String::from(parts.next().unwrap()),
     )
 }
 

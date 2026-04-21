@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="resources/styles.css">
     <meta charset="utf-8">
-    <title>Hello!</title>
+    <title>Helloo!</title>
   </head>
   <body>
-    <h1>Oops!</h1>
-    <p>Sorry, no page resides here.</p>
+    <div id="container">
+        <nav>
+          <ul>
+            <li class> 
+              <a href="/">~/</a>
+            </li>
+            <li class> 
+              <a href="/egg">~/Easter Egg</a>
+            </li>
+            <li class> 
+              <a href="/robots.txt">~/robots</a>
+            </li>
+          </ul>
+        </nav>
+        <main id="post">
+          <p> Sorry, the page you searched for could not be found </p>
+        </main>
+    </div>
   </body>
 </html>
-

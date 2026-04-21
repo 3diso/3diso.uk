@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" href="resources/styles.css">
     <meta charset="utf-8">
-    <title>Hello!</title>
+    <title>Helloo!</title>
   </head>
   <body>
-    <h1>Easter Egg!!!!</h1>
-    <p>How did you find this</p>
+    <div id="container">
+        <nav>
+          <ul>
+            <li class> 
+              <a href="/">~/</a>
+            </li>
+            <li class> 
+              <a href="/egg">~/Easter Egg</a>
+            </li>
+            <li class> 
+              <a href="/robots.txt">~/robots</a>
+            </li>
+          </ul>
+        </nav>
+        <main id="post">
+          <p> Easter egg</p>
+        </main>
+    </div>
   </body>
 </html>
